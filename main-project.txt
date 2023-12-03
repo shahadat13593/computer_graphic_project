@@ -1,0 +1,683 @@
+/// Dawn to Dusk: A Cinematic Journey Through Time
+#include <GL/gl.h>
+#include <stdio.h>
+#include <cmath>
+#include <GL/glut.h>
+
+GLfloat cloudX = 0.0;
+GLfloat carX = 0.0;
+bool reverseMovement = false;
+void init(void)
+{
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+
+	glMatrixMode(GL_PROJECTION);
+	gluOrtho2D(0.0, 200.0, 0.0, 260.0);
+}
+
+/// circle
+void circle(GLfloat rx, GLfloat ry, GLfloat cx, GLfloat cy)
+{
+    glBegin(GL_POLYGON);
+    glVertex2f(cx, cy);
+
+    for (int i = 0; i <= 360; i++)
+    {
+        float angle = i * 3.1416 / 180;
+        float x = rx * cos(angle);
+        float y = ry * sin(angle);
+
+        glVertex2f((x + cx), (y + cy));
+    }
+
+    glEnd();
+}
+
+/// star
+void drawRotatableStar(float cx, float cy, float outerRadius, float innerRadius, int points, float rotationAngle, float scale)
+{
+    glPushMatrix();
+    glTranslatef(cx, cy, 0.0);
+    glRotatef(rotationAngle, 0.0, 0.0, 1.0);
+    glScalef(scale, scale, 1.0);
+
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex2f(0.0, 0.0);
+
+    for (int i = 0; i <= points * 2; ++i)
+    {
+        float radius = (i % 2 == 0) ? outerRadius : innerRadius;
+        float angle = 2.0 * 3.14159265358979323846 * i / (points * 2);
+
+        float x = radius * std::cos(angle);
+        float y = radius * std::sin(angle);
+
+        glVertex2f(x, y);
+    }
+
+    glEnd();
+
+    glPopMatrix();
+}
+
+/// Pentagon
+
+void drawRotatablePolygon(float cx, float cy, float size, float rotationAngle, int sides)
+{
+    glPushMatrix();
+    glTranslatef(cx, cy, 0.0);
+    glRotatef(rotationAngle, 0.0, 0.0, 1.0);
+    glScalef(size, size, 1.0);
+
+    glBegin(GL_POLYGON);
+
+    for (int i = 0; i < sides; ++i) {
+        float angle = 2.0 * 3.14159265358979323846 * i / sides;
+        float x = 20 * std::cos(angle);
+        float y = 20 * std::sin(angle);
+        glVertex2f(x, y);
+    }
+
+    glEnd();
+
+    glPopMatrix();
+}
+/// car
+
+void drawCar()
+{
+    glBegin(GL_POLYGON);
+    glColor3f(0.8, 0.6, 1.0);
+ /// main body of car
+    glVertex2f(15 + carX -15, 40);
+    glVertex2f(40 + carX-15, 40);
+    glVertex2f(45 + carX-15, 25);
+    glVertex2f(45 + carX-15, 10);
+    glVertex2f(15 + carX-15, 10);
+
+    glEnd();
+
+    glBegin(GL_QUADS);
+    glColor3f(0.5, 0.5, 0.5);
+ ///Gap of the wheel
+    glVertex2f(20 + carX-15, 17);
+    glVertex2f(27 + carX-15, 17);
+    glVertex2f(27 + carX-15, 5);
+    glVertex2f(20 + carX-15, 5);
+
+    glVertex2f(34 + carX-15, 17);
+    glVertex2f(41 + carX-15, 17);
+    glVertex2f(41 + carX-15, 5);
+    glVertex2f(34 + carX-15, 5);
+///QUADS of the car
+    glColor3f(0.0, 0.0, 0.0);
+    glVertex2f(17 + carX-15, 23);
+    glVertex2f(23 + carX-15, 23);
+    glVertex2f(23 + carX-15, 35);
+    glVertex2f(17 + carX-15, 35);
+
+    glVertex2f(17 + 8 + carX-15, 23);
+    glVertex2f(23 + 8 + carX-15, 23);
+    glVertex2f(23 + 8 + carX-15, 35);
+    glVertex2f(17 + 8 + carX-15, 35);
+
+    glVertex2f(17 + 16 + carX-15, 23);
+    glVertex2f(23 + 16 + carX-15, 23);
+    glVertex2f(23 + 16 + carX-15, 35);
+    glVertex2f(17 + 16 + carX-15, 35);
+
+    glEnd();
+
+    drawRotatablePolygon(8.5 + carX, 12, 0.16, 0.0, 9);
+    drawRotatablePolygon(22.5 + carX, 12, 0.16, 0.0, 9);
+    if(carX < 200){
+        carX += 0.01;
+    }else{
+        carX = 0;
+    }
+
+}
+
+
+///  drawShapes
+
+void drawShapes(void)
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	glColor3f(0.0, 0.0, 0.0);
+	glPointSize(5.0);
+
+	/// main background white
+		glBegin(GL_QUADS);
+		glColor3f(1.0, 1.0, 1.0);
+		glVertex2i(0, 0);
+		glVertex2i(100, 0);
+		glVertex2i(100, 260);
+		glVertex2i(0, 260);
+	glEnd();
+
+
+		///house of background white
+		glBegin(GL_QUADS);
+		glColor3f(0.8, 0.8, 1.0);
+		/// left half
+		glVertex2i(15, 100);
+		glVertex2i(40, 100);
+		glVertex2i(40, 140);
+		glVertex2i(15, 140);
+         /// right half
+        glVertex2i(40, 100);
+		glVertex2i(75, 100);
+		glVertex2i(75, 140);
+		glVertex2i(40, 140);
+
+        glColor3f(1.0, 0.8, 0.8);
+        /// down - light red
+        glVertex2i(38, 97);
+		glVertex2i(77, 97);
+		glVertex2i(77, 100);
+		glVertex2i(38, 100);
+
+       /// big rooftop
+		glVertex2i(11, 140);
+		glVertex2i(79, 140);
+		glVertex2i(79, 155);
+		glVertex2i(11, 155);
+
+        /// small room on  big rooftop
+        glColor3f(0.8, 0.8, 1.0);
+		glVertex2i(43, 147);
+		glVertex2i(72, 147);
+		glVertex2i(72, 175);
+		glVertex2i(43, 175);
+
+		/// small room's rooftop
+        glColor3f(1.0, 0.8, 0.8);
+        glVertex2i(39, 175);
+		glVertex2i(76, 175);
+		glVertex2i(76, 185);
+		glVertex2i(39, 185);
+
+		///Chimney on rooftop
+		glColor3f(0.8, 0.8, 1.0);
+        glVertex2i(16, 155);
+		glVertex2i(22, 155);
+		glVertex2i(22, 170);
+		glVertex2i(16, 170);
+
+        /// Chimney's rooftop
+       glColor3f(1.0, 0.8, 0.8);
+        glVertex2i(14, 170);
+		glVertex2i(24, 170);
+		glVertex2i(24, 173);
+		glVertex2i(14, 173);
+
+
+		/// house door
+        glColor3f(0.4, 0.2, 0.0);
+        glVertex2i(46, 100);
+		glVertex2i(57, 100);
+		glVertex2i(57, 120);
+		glVertex2i(46, 120);
+
+       /// Right window
+       glVertex2i(62, 120);
+		glVertex2i(72, 120);
+		glVertex2i(72, 108);
+		glVertex2i(62, 108);
+
+
+       /// Left window
+        glVertex2i(22, 125);
+		glVertex2i(32, 125);
+		glVertex2i(32, 115);
+		glVertex2i(22, 115);
+
+      /// small room's window
+        glVertex2i(53, 154);
+		glVertex2i(61, 154);
+		glVertex2i(61, 168);
+		glVertex2i(53, 168);
+
+	glEnd();
+
+	/// Borders of the house
+
+        glBegin(GL_LINES);
+		glColor3f(0.5, 0.5, 0.5);
+		/// for big house
+		glVertex2i(40, 100);
+		glVertex2i(40, 140);
+
+        glVertex2i(75, 100);
+		glVertex2i(75, 140);
+
+       /// for small house
+       glVertex2i(43, 147);
+       glVertex2i(43, 175);
+
+       glVertex2i(72, 147);
+       glVertex2i(72, 175);
+
+       glVertex2i(43, 147);
+       glVertex2i(72, 147);
+
+
+          /// big rooftop
+
+        glVertex2i(11, 140);
+        glVertex2i(11, 155);
+
+        glVertex2i(79, 140);
+        glVertex2i(79, 155);
+
+        glVertex2i(11, 140);
+        glVertex2i(79, 140);
+
+	     glVertex2i(11, 155);
+         glVertex2i(43, 155);
+
+         glVertex2i(72, 155);
+         glVertex2i(79, 155);
+
+		/// small room's rooftop
+
+        glVertex2i(39, 175);
+		glVertex2i(76, 175);
+
+        glVertex2i(76, 185);
+		glVertex2i(39, 185);
+
+        glVertex2i(39, 175);
+        glVertex2i(39, 185);
+
+        glVertex2i(76, 175);
+        glVertex2i(76, 185);
+
+
+    /// Chimney's rooftop
+
+        glVertex2i(14, 170);
+		glVertex2i(24, 170);
+
+		glVertex2i(24, 173);
+		glVertex2i(14, 173);
+
+		glVertex2i(14, 170);
+		glVertex2i(14, 173);
+
+		glVertex2i(24, 170);
+		glVertex2i(24, 173);
+
+		///Chimney on rooftop
+
+        glVertex2i(16, 155);
+		glVertex2i(22, 155);
+
+		glVertex2i(22, 170);
+		glVertex2i(16, 170);
+
+
+        glVertex2i(16, 155);
+        glVertex2i(16, 170);
+
+        glVertex2i(22, 155);
+        glVertex2i(22, 170);
+
+
+        /// Right window
+        glColor3f(1.0, 1.0, 1.0);
+        glVertex2i(67, 120);
+        glVertex2i(67, 108);
+
+        /// Right window
+        glVertex2i(27, 125);
+        glVertex2i(27, 115);
+
+        /// small room's window
+        glVertex2i(57, 154);
+		glVertex2i(57, 168);
+
+        /// house door
+
+		glVertex2i(57, 120);
+		glVertex2i(46, 120);
+
+		glVertex2i(46, 100);
+		glVertex2i(46, 120);
+
+		glVertex2i(57, 100);
+		glVertex2i(57, 120);
+	glEnd();
+
+/// ---------------------------------------------------------------
+
+        glBegin(GL_QUADS);
+		glColor3f(0.6, 0.7, 0.8);
+
+		/// left half
+		glVertex2i(15 + 100, 100);
+		glVertex2i(40 + 100, 100);
+		glVertex2i(40 + 100, 140);
+		glVertex2i(15 + 100, 140);
+
+		/// right half
+        glVertex2i(40 + 100, 100);
+		glVertex2i(75 + 100, 100);
+		glVertex2i(75 + 100, 140);
+		glVertex2i(40 + 100, 140);
+
+        glColor3f(1.0, 0.8, 0.7);
+        /// down - light red
+        glVertex2i(38 + 100, 97);
+		glVertex2i(77 + 100, 97);
+		glVertex2i(77 + 100, 100);
+		glVertex2i(38 + 100, 100);
+
+       /// big rooftop
+		glVertex2i(11 + 100, 140);
+		glVertex2i(79 + 100, 140);
+		glVertex2i(79 + 100, 155);
+		glVertex2i(11 + 100, 155);
+
+        /// small room on  big rooftop
+       glColor3f(0.6, 0.7, 0.8);
+		glVertex2i(43 + 100, 147);
+		glVertex2i(72 + 100, 147);
+		glVertex2i(72 + 100, 175);
+		glVertex2i(43 + 100, 175);
+
+		/// small room's rooftop
+        glColor3f(1.0, 0.8, 0.7);
+        glVertex2i(39 + 100, 175);
+		glVertex2i(76 + 100, 175);
+		glVertex2i(76 + 100, 185);
+		glVertex2i(39 + 100, 185);
+
+		///Chimney on rooftop
+		 glColor3f(0.6, 0.7, 0.8);
+        glVertex2i(16 + 100, 155);
+		glVertex2i(22 + 100, 155);
+		glVertex2i(22 + 100, 170);
+		glVertex2i(16 + 100, 170);
+
+        /// Chimney's rooftop
+        glColor3f(1.0, 0.8, 0.7);
+        glVertex2i(14 + 100, 170);
+		glVertex2i(24 + 100, 170);
+		glVertex2i(24 + 100, 173);
+		glVertex2i(14 + 100, 173);
+
+
+		/// house door
+        glColor3f(0.4, 0.2, 0.0);
+        glVertex2i(46 + 100, 100);
+		glVertex2i(57 + 100, 100);
+		glVertex2i(57 + 100, 120);
+		glVertex2i(46 + 100, 120);
+
+       /// Right window
+        glVertex2i(62 + 100, 120);
+		glVertex2i(72 + 100, 120);
+		glVertex2i(72 + 100, 108);
+		glVertex2i(62 + 100, 108);
+
+
+       /// Left window
+        glVertex2i(22 + 100, 125);
+		glVertex2i(32 + 100, 125);
+		glVertex2i(32 + 100, 115);
+		glVertex2i(22 + 100, 115);
+
+      /// small room's window
+        glVertex2i(53 + 100, 154);
+		glVertex2i(61 + 100, 154);
+		glVertex2i(61 + 100, 168);
+		glVertex2i(53 + 100, 168);
+
+		glEnd();
+
+
+
+		/// Borders of the house
+
+        glBegin(GL_LINES);
+		glColor3f(0.5, 0.5, 0.5);
+		/// for big house
+		glVertex2i(40 + 100 , 100);
+		glVertex2i(40 + 100, 140);
+
+        glVertex2i(75 + 100, 100);
+		glVertex2i(75 + 100, 140);
+
+       /// for small house
+       glVertex2i(43 + 100, 147);
+       glVertex2i(43 + 100, 175);
+
+       glVertex2i(72 + 100, 147);
+       glVertex2i(72 + 100, 175);
+
+       glVertex2i(43 + 100, 147);
+       glVertex2i(72 + 100, 147);
+
+
+          /// big rooftop
+
+        glVertex2i(11 + 100, 140);
+        glVertex2i(11 + 100, 155);
+
+        glVertex2i(79 + 100, 140);
+        glVertex2i(79 + 100, 155);
+
+        glVertex2i(11 + 100, 140);
+        glVertex2i(79 + 100, 140);
+
+	     glVertex2i(11 + 100, 155);
+         glVertex2i(43 + 100, 155);
+
+         glVertex2i(72 + 100, 155);
+         glVertex2i(79 + 100, 155);
+
+		/// small room's rooftop
+
+        glVertex2i(39 + 100, 175);
+		glVertex2i(76 + 100, 175);
+
+        glVertex2i(76 + 100, 185);
+		glVertex2i(39 + 100, 185);
+
+        glVertex2i(39 + 100, 175);
+        glVertex2i(39 + 100, 185);
+
+        glVertex2i(76 + 100, 175);
+        glVertex2i(76 + 100, 185);
+
+
+    /// Chimney's rooftop
+
+        glVertex2i(14 + 100, 170);
+		glVertex2i(24 + 100, 170);
+
+		glVertex2i(24 + 100, 173);
+		glVertex2i(14 + 100, 173);
+
+		glVertex2i(14 + 100, 170);
+		glVertex2i(14 + 100, 173);
+
+		glVertex2i(24 + 100, 170);
+		glVertex2i(24 + 100, 173);
+
+		///Chimney on rooftop
+
+        glVertex2i(16 + 100, 155);
+		glVertex2i(22 + 100, 155);
+
+		glVertex2i(22 + 100, 170);
+		glVertex2i(16 + 100, 170);
+
+
+        glVertex2i(16 + 100, 155);
+        glVertex2i(16 + 100, 170);
+
+        glVertex2i(22 + 100, 155);
+        glVertex2i(22 + 100, 170);
+
+
+        /// Right window
+        glColor3f(1.0, 1.0, 1.0);
+        glVertex2i(67 + 100, 120);
+        glVertex2i(67 + 100, 108);
+
+        /// Right window
+        glVertex2i(27 + 100, 125);
+        glVertex2i(27 + 100, 115);
+
+        /// small room's window
+        glVertex2i(57 + 100, 154);
+		glVertex2i(57 + 100, 168);
+
+        /// house door
+
+		glVertex2i(57 + 100, 120);
+		glVertex2i(46 + 100, 120);
+
+		glVertex2i(46 + 100, 100);
+		glVertex2i(46 + 100, 120);
+
+		glVertex2i(57 + 100, 100);
+		glVertex2i(57 + 100, 120);
+	glEnd();
+
+
+/// ---------------------------------------------------------------
+
+
+/// Road
+
+        glBegin(GL_QUADS);
+
+        /// main road background
+        glColor3f(0.5, 0.5, 0.5);
+//        glColor3f(0.2, 0.2, 0.2);
+        glVertex2i(0, 0);
+        glVertex2i(100,0);
+        glVertex2i(100, 50);
+        glVertex2i(0, 50);
+
+
+//        glColor3f(0.2, 0.2, 0.2);
+        glVertex2i(100, 0);
+        glVertex2i(200,0);
+        glVertex2i(200, 50);
+        glVertex2i(100, 50);
+
+
+         ///road stripe
+        glColor3f(0.0, 0.0, 0.0);
+        glVertex2i(20, 20);
+        glVertex2i(40,20);
+        glVertex2i(40, 30);
+        glVertex2i(20, 30);
+
+        glColor3f(1.0, 1.0, 1.0);
+        glVertex2i(50, 20);
+        glVertex2i(70,20);
+        glVertex2i(70, 30);
+        glVertex2i(50, 30);
+
+        glColor3f(0.0, 0.0, 0.0);
+        glVertex2i(80, 20);
+        glVertex2i(100,20);
+        glVertex2i(100, 30);
+        glVertex2i(80, 30);
+
+        glColor3f(1.0, 1.0, 1.0);
+        glVertex2i(110, 20);
+        glVertex2i(130,20);
+        glVertex2i(130, 30);
+        glVertex2i(110, 30);
+
+
+        glColor3f(0.0, 0.0, 0.0);
+        glVertex2i(140, 20);
+        glVertex2i(160,20);
+        glVertex2i(160, 30);
+        glVertex2i(140, 30);
+
+        glColor3f(1.0, 1.0, 1.0);
+        glVertex2i(170, 20);
+        glVertex2i(190,20);
+        glVertex2i(190, 30);
+        glVertex2i(170, 30);
+
+        glEnd();
+
+/// car
+drawCar();
+
+///----------------------------------------------------------------
+
+/// Sun
+    glColor3f(1.0, 0.8, 0.0);
+    circle(8, 12, 22, 240);
+
+
+/// moon
+
+	glColor3f(1.0, 1.0,1.0);
+    circle(7, 11, 170, 225);
+
+/// moving clouds
+
+ if (cloudX < 10 && !reverseMovement) {
+    cloudX += 0.01;
+} else {
+    reverseMovement = true;
+}
+
+if (cloudX > 0 && reverseMovement) {
+    cloudX -= 0.01;
+} else {
+    reverseMovement = false;
+}
+
+
+/// clouds 1
+        glColor3f(0.8, 0.9, 1.0);
+        circle(6, 12, 40 + cloudX, 210);
+        circle(6, 12, 48 + cloudX, 210);
+        circle(6, 12, 32 + cloudX, 210);
+/// clouds 2
+        glColor3f(0.8, 0.9, 1.0);
+        circle(4, 8, 70 + cloudX, 210);
+        circle(6, 12, 77 + cloudX, 210);
+        circle(4, 8, 85 + cloudX, 210);
+
+  /// star
+    glColor3f(1.0, 1.0, 1.0);
+    drawRotatableStar(130.0, 220.0, 12.0, 6.0, 5, 90.0, 0.35);
+    drawRotatableStar(145.0, 240.0, 11.0, 5.0, 5, 90.0, 0.3);
+    drawRotatableStar(110.0, 240.0, 10.0, 5.0, 5, 90.0, 0.3);
+    drawRotatableStar(190.0, 240.0, 10.0, 5.0, 5, 90.0, 0.3);
+
+    glutPostRedisplay();
+    glFlush();
+
+}
+
+
+int main(int argc, char* argv[])
+{
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowPosition(100, 100);
+    glutInitWindowSize(1260, 830);
+    glutCreateWindow("An Example OpenGL Program");
+
+    init();
+    glutDisplayFunc(drawShapes);
+
+    glutMainLoop();
+
+    return 0;
+}
